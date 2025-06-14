@@ -1,0 +1,60 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:5000",
+  "dependencies": {
+    "@chakra-ui/avatar": "^2.3.0",
+    "@chakra-ui/button": "^2.1.0",
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/input": "^2.1.2",
+    "@chakra-ui/layout": "^2.3.1",
+    "@chakra-ui/menu": "^2.2.1",
+    "@chakra-ui/modal": "^2.3.1",
+    "@chakra-ui/react": "^2.10.9",
+    "@chakra-ui/skeleton": "^2.0.1",
+    "@chakra-ui/spinner": "^2.1.0",
+    "@chakra-ui/system": "^2.6.2",
+    "@chakra-ui/toast": "^7.0.2",
+    "@chakra-ui/tooltip": "^2.3.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.9.0",
+    "framer-motion": "^12.16.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-lottie": "^1.2.10",
+    "react-router-dom": "^5.3.4",
+    "react-scripts": "^5.0.1",
+    "react-scrollable-feed": "^2.0.2",
+    "socket.io-client": "^4.8.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
