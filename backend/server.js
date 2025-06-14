@@ -12,6 +12,8 @@ const cors = require("cors");
 dotenv.config();
 connectDB();
 const app = express();
+
+const allowedOrigins = [
   "http://localhost:3000",
   "https://linkify-1q81.onrender.com"
 ];
