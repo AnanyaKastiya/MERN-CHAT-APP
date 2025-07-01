@@ -12,6 +12,16 @@ const MyChats = ({ fetchAgain }) => {
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
   const toast = useToast();
 
+  const isValidUser = (user) => {
+    return user && 
+           user._id && 
+           user.name && 
+           typeof user._id === 'string' && 
+           typeof user.name === 'string' &&
+           user._id.trim() !== '' && 
+           user.name.trim() !== '';
+  };
+
   const fetchChats = async () => {
     try {
       const config = {
@@ -21,7 +31,30 @@ const MyChats = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get("/api/chat", config);
-      setChats(data);
+      // Filter out invalid chats
+      const validChats = data.filter(chat => {
+        // Check if chat has valid users array
+        if (!chat.users || !Array.isArray(chat.users) || chat.users.length === 0) return false;
+
+        // For group chats
+        if (chat.isGroupChat) {
+          // Check if group has a valid name
+          if (!chat.chatName || typeof chat.chatName !== 'string' || chat.chatName.trim() === '') return false;
+          
+          // Check if all users in group are valid
+          const allUsersValid = chat.users.every(isValidUser);
+          if (!allUsersValid) return false;
+
+          // Additional check for group admin
+          if (!chat.groupAdmin || !isValidUser(chat.groupAdmin)) return false;
+
+          return true;
+        }
+        
+        // For individual chats
+        return chat.users.length === 2 && chat.users.every(isValidUser);
+      });
+      setChats(validChats);
     } catch (error) {
       toast({
         title: "Error Occurred!",
@@ -35,8 +68,11 @@ const MyChats = ({ fetchAgain }) => {
   };
 
   useEffect(() => {
-    setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
-    fetchChats();
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    if (userInfo) {
+      setLoggedUser(userInfo);
+      fetchChats();
+    }
   }, [fetchAgain]);
 
   return (
@@ -45,12 +81,13 @@ const MyChats = ({ fetchAgain }) => {
       flexDir="column"
       alignItems="center"
       p={3}
-      bg="gray.800"
+      bg="white"
       w="100%"
       h="100%"
       borderRadius="lg"
-      color="white"
-      overflow="hidden"
+      boxShadow="lg"
+      borderWidth="1px"
+      borderColor="gray.200"
     >
       <Box
         pb={3}
@@ -61,15 +98,23 @@ const MyChats = ({ fetchAgain }) => {
         w="100%"
         justifyContent="space-between"
         alignItems="center"
-        color="white"
+        color="gray.700"
+        borderBottom="1px"
+        borderColor="gray.200"
       >
-        My Chats
+        <Text fontWeight="bold">My Chats</Text>
         <GroupChatModal>
           <Button
             display="flex"
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
             rightIcon={<AddIcon />}
             colorScheme="teal"
+            size="sm"
+            _hover={{
+              bg: "teal.500",
+              transform: "scale(1.05)",
+              transition: "all 0.2s ease-in-out"
+            }}
           >
             New Group Chat
           </Button>
@@ -78,33 +123,42 @@ const MyChats = ({ fetchAgain }) => {
       <Box
         flex="1"
         w="100%"
-        bg="#2D3748"
+        bg="gray.50"
         borderRadius="lg"
         overflowY="auto"
         p={3}
+        mt={2}
       >
-        {chats ? (
-          <Stack spacing={2}>
+        {chats && loggedUser ? (
+          <Stack spacing={3}>
             {chats.map((chat) => (
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#4A5568"}
-                color={selectedChat === chat ? "white" : "gray.200"}
-                px={3}
-                py={2}
+                bg={selectedChat === chat ? "teal.100" : "white"}
+                color={selectedChat === chat ? "teal.700" : "gray.700"}
+                px={4}
+                py={3}
                 borderRadius="lg"
                 key={chat._id}
+                borderWidth="1px"
+                borderColor={selectedChat === chat ? "teal.200" : "gray.200"}
+                _hover={{
+                  bg: selectedChat === chat ? "teal.100" : "gray.50",
+                  transform: "translateY(-2px)",
+                  transition: "all 0.2s ease-in-out",
+                  boxShadow: "md"
+                }}
               >
-                <Text color="white">
+                <Text fontWeight="semibold" fontSize="md">
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
                     : chat.chatName}
                 </Text>
-                {chat.latestMessage && (
-                  <Text fontSize="xs" color="gray.200">
+                {chat.latestMessage && chat.latestMessage.sender && (
+                  <Text fontSize="sm" color="gray.500" mt={1}>
                     <b>{chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
+                    {chat.latestMessage.content && chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}
                   </Text>

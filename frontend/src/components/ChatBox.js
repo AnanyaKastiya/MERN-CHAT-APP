@@ -10,7 +10,7 @@ import animationData from "../animations/typing.json";
 import { ViewIcon } from "@chakra-ui/icons";
 import UpdateGroupChatModal from "./miscallaneous/UpdateGroupChatModal";
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = "https://linkify-1q81.onrender.com";
 let socket, selectedChatCompare;
 
 const ChatBox = ({ fetchAgain, setFetchAgain }) => {
