@@ -37,6 +37,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
+// Deployment
 const __dirname1 = path.resolve();
 
 if (process.env.NODE_ENV === "production") {
@@ -50,6 +51,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
