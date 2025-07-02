@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "server": "nodemon backend/server.js",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+    "lint": "eslint ./frontend/src"
   },
   "author": "Ananya Kastiya",
   "license": "ISC",
@@ -24,5 +25,8 @@
     "mongoose": "^7.6.3",
     "nodemon": "^3.0.1",
     "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.30.1"
   }
 }
