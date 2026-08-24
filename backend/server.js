@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+const fs = require("fs");
 const path = require("path");
 const colors = require("colors");
 const cors = require("cors");
@@ -14,20 +15,9 @@ connectDB();
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://linkify-1q81.onrender.com",
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true,
     credentials: true,
   })
 );
@@ -38,11 +28,16 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
 const __dirname1 = path.resolve();
+const buildPath = path.join(__dirname1, "frontend", "build");
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "/frontend/build")));
+if (
+  process.env.NODE_ENV === "production" ||
+  process.env.RENDER ||
+  fs.existsSync(path.join(buildPath, "index.html"))
+) {
+  app.use(express.static(buildPath));
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname1, "frontend", "build", "index.html"))
+    res.sendFile(path.join(buildPath, "index.html"))
   );
 } else {
   app.get("/", (req, res) => {
@@ -63,13 +58,8 @@ const server = app.listen(
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "*",
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
