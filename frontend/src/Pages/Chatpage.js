@@ -6,7 +6,7 @@ import ChatBox from "../components/ChatBox";
 import { useState } from "react";
 
 const ChatPage = () => {
-  const { user } = ChatState();
+  const { user, selectedChat } = ChatState();
   const [fetchAgain, setFetchAgain] = useState(false);
 
   return (
@@ -17,11 +17,11 @@ const ChatPage = () => {
         {/* Sidebar: MyChats */}
         {user && (
           <Box
-            display={{ base: "none", md: "flex" }}
+            display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
             flexDir="column"
             alignItems="center"
             bg="gray.800"
-            w={{ base: "100%", md: "30%" }}
+            w={{ base: "100%", md: "32%", lg: "28%" }}
             h="100%"
             borderRight="1px solid #222"
             overflowY="auto"
@@ -31,11 +31,11 @@ const ChatPage = () => {
         )}
         {/* Main Chat Area: ChatBox */}
         <Box
-          display="flex"
+          display={{ base: selectedChat ? "flex" : "none", md: "flex" }}
           flexDir="column"
           alignItems="center"
           bg="gray.900"
-          w={{ base: "100%", md: "70%" }}
+          w={{ base: "100%", md: "68%", lg: "72%" }}
           h="100%"
           overflowY="auto"
         >

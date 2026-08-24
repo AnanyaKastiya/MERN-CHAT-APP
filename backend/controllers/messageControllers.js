@@ -48,7 +48,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     message = await message.populate("sender", "name pic email");
     message = await message.populate("chat");
-    message = await message.populate({
+    message = await User.populate(message, {
       path: "chat.users",
       select: "name pic email",
     });
@@ -79,7 +79,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 
         aiMessage = await aiMessage.populate("sender", "name pic email");
         aiMessage = await aiMessage.populate("chat");
-        aiMessage = await aiMessage.populate({
+        aiMessage = await User.populate(aiMessage, {
           path: "chat.users",
           select: "name pic email",
         });

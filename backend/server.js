@@ -68,25 +68,46 @@ io.on("connection", (socket) => {
   console.log("Connected to socket.io");
 
   socket.on("setup", (userData) => {
-    socket.join(userData._id);
+    if (!userData) return;
+    const userId = String(userData._id || userData);
+    socket.join(userId);
     socket.emit("connected");
   });
 
   socket.on("join chat", (room) => {
-    socket.join(room);
-    console.log("User Joined Room: " + room);
+    if (!room) return;
+    const roomId = String(room._id || room);
+    socket.join(roomId);
+    console.log("User Joined Room: " + roomId);
   });
 
-  socket.on("typing", (room) => socket.in(room).emit("typing"));
-  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+  socket.on("typing", (room) => {
+    if (!room) return;
+    const roomId = String(room._id || room);
+    socket.in(roomId).emit("typing");
+  });
+
+  socket.on("stop typing", (room) => {
+    if (!room) return;
+    const roomId = String(room._id || room);
+    socket.in(roomId).emit("stop typing");
+  });
 
   socket.on("new message", (newMessageReceived) => {
+    if (!newMessageReceived || !newMessageReceived.chat) return;
     const chat = newMessageReceived.chat;
     if (!chat.users) return console.log("chat.users not defined");
 
+    const senderId = String(
+      newMessageReceived.sender?._id || newMessageReceived.sender
+    );
+
     chat.users.forEach((user) => {
-      if (user._id === newMessageReceived.sender._id) return;
-      socket.in(user._id).emit("message received", newMessageReceived);
+      const targetUserId = String(user?._id || user);
+      if (targetUserId === senderId) return;
+
+      socket.in(targetUserId).emit("message received", newMessageReceived);
+      socket.in(targetUserId).emit("message recieved", newMessageReceived);
     });
   });
 

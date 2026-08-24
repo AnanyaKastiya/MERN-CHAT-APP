@@ -20,7 +20,7 @@ import ScrollableFeed from "react-scrollable-feed";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-import { ViewIcon } from "@chakra-ui/icons";
+import { ViewIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import UpdateGroupChatModal from "./miscallaneous/UpdateGroupChatModal";
 import ProfileModal from "./miscallaneous/ProfileModal";
 import ChatSummaryModal from "./miscallaneous/ChatSummaryModal";
@@ -39,7 +39,7 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
-  const { selectedChat, user, notification, setNotification } =
+  const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
@@ -252,6 +252,15 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
           borderRadius="md"
         >
           <HStack spacing={3}>
+            <IconButton
+              display={{ base: "flex", md: "none" }}
+              icon={<ArrowBackIcon />}
+              variant="ghost"
+              color="white"
+              _hover={{ bg: "gray.700" }}
+              aria-label="Back to chat list"
+              onClick={() => setSelectedChat(null)}
+            />
             <Avatar
               size="md"
               name={
