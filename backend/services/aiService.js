@@ -9,6 +9,31 @@ const getAiClient = () => {
 };
 
 /**
+ * Attempts generation using modern Gemini models with automatic fallback.
+ */
+const generateWithFallback = async (ai, contents) => {
+  const models = ["gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite"];
+  let lastError;
+
+  for (const model of models) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents,
+      });
+      if (response && response.text) {
+        return response;
+      }
+    } catch (err) {
+      lastError = err;
+      console.warn(`Model ${model} unavailable, trying fallback... Error:`, err.message);
+    }
+  }
+
+  throw lastError || new Error("Failed to generate content with available Gemini models.");
+};
+
+/**
  * Summarizes a list of chat messages into structured JSON.
  * @param {Array<{sender: {name: string}, content: string, createdAt: string}>} messages
  */
@@ -52,10 +77,7 @@ If there are no explicit decisions or action items, return empty arrays [].
 Respond ONLY with the raw JSON object, without any surrounding markdown code fences.`;
 
   const ai = getAiClient();
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: prompt,
-  });
+  const response = await generateWithFallback(ai, prompt);
 
   let text = response.text ? response.text.trim() : "";
   // Strip any markdown code block wrappers if present
@@ -107,10 +129,7 @@ Guidelines:
 - If asked to do tasks (e.g. summarize, write a draft, answer a tech question, solve a bug), do it directly.`;
 
   const ai = getAiClient();
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: prompt,
-  });
+  const response = await generateWithFallback(ai, prompt);
 
   return response.text ? response.text.trim() : "I couldn't generate a response.";
 };

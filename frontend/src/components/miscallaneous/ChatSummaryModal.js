@@ -112,7 +112,7 @@ Mood / Sentiment: ${summary.sentiment || "Neutral"}
                   ✨ Linkify AI Intelligence
                 </Text>
                 <Badge colorScheme="purple" variant="subtle" fontSize="xs" px={2} py={0.5} borderRadius="full">
-                  Gemini 2.5
+                  Gemini 3.7
                 </Badge>
               </HStack>
             </HStack>
