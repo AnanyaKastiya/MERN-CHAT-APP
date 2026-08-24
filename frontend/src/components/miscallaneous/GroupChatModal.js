@@ -47,7 +47,8 @@ const GroupChatModal = ({ children }) => {
 
   const handleSearch = async (query) => {
     setSearch(query);
-    if (!query) {
+    if (!query || !query.trim()) {
+      setSearchResult([]);
       return;
     }
 
@@ -58,18 +59,20 @@ const GroupChatModal = ({ children }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await axios.get(`/api/user?search=${query.trim()}`, config);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
       toast({
         title: "Error Occurred!",
-        description: "Failed to Load the Search Results",
+        description:
+          error.response?.data?.message || "Failed to Load the Search Results",
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "bottom-left",
       });
+      setLoading(false);
     }
   };
 
