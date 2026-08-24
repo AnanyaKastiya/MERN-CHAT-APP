@@ -65,12 +65,13 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("Connected to socket.io");
+  console.log("Connected to socket.io:", socket.id);
 
   socket.on("setup", (userData) => {
     if (!userData) return;
     const userId = String(userData._id || userData);
     socket.join(userId);
+    console.log(`Socket ${socket.id} joined user room: ${userId}`);
     socket.emit("connected");
   });
 
@@ -78,19 +79,19 @@ io.on("connection", (socket) => {
     if (!room) return;
     const roomId = String(room._id || room);
     socket.join(roomId);
-    console.log("User Joined Room: " + roomId);
+    console.log(`Socket ${socket.id} joined chat room: ${roomId}`);
   });
 
   socket.on("typing", (room) => {
     if (!room) return;
     const roomId = String(room._id || room);
-    socket.in(roomId).emit("typing");
+    socket.to(roomId).emit("typing", roomId);
   });
 
   socket.on("stop typing", (room) => {
     if (!room) return;
     const roomId = String(room._id || room);
-    socket.in(roomId).emit("stop typing");
+    socket.to(roomId).emit("stop typing", roomId);
   });
 
   socket.on("new message", (newMessageReceived) => {
@@ -106,13 +107,13 @@ io.on("connection", (socket) => {
       const targetUserId = String(user?._id || user);
       if (targetUserId === senderId) return;
 
-      socket.in(targetUserId).emit("message received", newMessageReceived);
-      socket.in(targetUserId).emit("message recieved", newMessageReceived);
+      console.log(`Delivering message to user room: ${targetUserId}`);
+      io.to(targetUserId).emit("message received", newMessageReceived);
+      io.to(targetUserId).emit("message recieved", newMessageReceived);
     });
   });
 
-  socket.off("setup", () => {
-    console.log("USER DISCONNECTED");
-    socket.leave(socket.id);
+  socket.on("disconnect", () => {
+    console.log("User socket disconnected:", socket.id);
   });
 });

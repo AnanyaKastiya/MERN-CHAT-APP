@@ -1,13 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import io from "socket.io-client";
+
+const ENDPOINT =
+  typeof window !== "undefined" && window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : (typeof window !== "undefined" ? window.location.origin : "");
 
 const ChatContext = createContext();
+
+let globalSocket;
 
 const ChatProvider = ({ children }) => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState([]);
   const [chats, setChats] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const history = useHistory();
 
@@ -25,6 +35,22 @@ const ChatProvider = ({ children }) => {
     }
   }, [history]);
 
+  useEffect(() => {
+    if (user) {
+      if (!globalSocket || !globalSocket.connected) {
+        globalSocket = io(ENDPOINT);
+      }
+      setSocket(globalSocket);
+
+      globalSocket.emit("setup", user);
+      globalSocket.on("connected", () => setSocketConnected(true));
+
+      return () => {
+        // preserve global socket connection across views
+      };
+    }
+  }, [user]);
+
   return (
     <ChatContext.Provider
       value={{
@@ -36,6 +62,8 @@ const ChatProvider = ({ children }) => {
         setNotification,
         chats,
         setChats,
+        socket,
+        socketConnected,
       }}
     >
       {children}

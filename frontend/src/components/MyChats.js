@@ -17,6 +17,7 @@ const MyChats = ({ fetchAgain }) => {
     setChats,
     notification,
     setNotification,
+    socket,
   } = ChatState();
   const toast = useToast();
 
@@ -49,6 +50,30 @@ const MyChats = ({ fetchAgain }) => {
       fetchChats();
     }
   }, [fetchAgain, user]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleRealtimeMessage = (newMessageRecieved) => {
+      setChats((prevChats) => {
+        if (!prevChats || !Array.isArray(prevChats)) return prevChats;
+        return prevChats.map((c) => {
+          if (c._id === newMessageRecieved.chat._id) {
+            return { ...c, latestMessage: newMessageRecieved };
+          }
+          return c;
+        });
+      });
+    };
+
+    socket.on("message received", handleRealtimeMessage);
+    socket.on("message recieved", handleRealtimeMessage);
+
+    return () => {
+      socket.off("message received", handleRealtimeMessage);
+      socket.off("message recieved", handleRealtimeMessage);
+    };
+  }, [socket]);
 
   return (
     <Box

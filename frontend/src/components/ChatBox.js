@@ -35,12 +35,18 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
-  const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
-  const { selectedChat, setSelectedChat, user, notification, setNotification } =
-    ChatState();
+  const {
+    selectedChat,
+    setSelectedChat,
+    user,
+    notification,
+    setNotification,
+    socket,
+    socketConnected,
+  } = ChatState();
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
   const defaultOptions = {
@@ -109,7 +115,9 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
       setMessages(data);
       setLoading(false);
 
-      socket.emit("join chat", selectedChat._id);
+      if (socket) {
+        socket.emit("join chat", selectedChat._id);
+      }
     } catch (error) {
       toast({
         title: "Error Occurred!",
@@ -125,7 +133,9 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
 
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage.trim()) {
-      socket.emit("stop typing", selectedChat._id);
+      if (socket && selectedChat) {
+        socket.emit("stop typing", selectedChat._id);
+      }
       try {
         const config = {
           headers: {
@@ -144,11 +154,15 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
           config
         );
 
-        socket.emit("new message", data);
+        if (socket) {
+          socket.emit("new message", data);
+        }
 
         // If an AI response was generated from @ai / @bot:
         if (data.aiReply) {
-          socket.emit("new message", data.aiReply);
+          if (socket) {
+            socket.emit("new message", data.aiReply);
+          }
           setMessages((prev) => [...prev, data, data.aiReply]);
         } else {
           setMessages((prev) => [...prev, data]);
@@ -167,30 +181,44 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
   };
 
   useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit("setup", user);
-    socket.on("connected", () => setSocketConnected(true));
+    if (!socket) return;
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
-  }, [user]);
+
+    return () => {
+      socket.off("typing");
+      socket.off("stop typing");
+    };
+  }, [socket]);
 
   useEffect(() => {
     fetchMessages();
-    selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
   useEffect(() => {
+    if (!socket) return;
+
     const handleMessageReceived = (newMessageRecieved) => {
       if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== newMessageRecieved.chat._id
+        !selectedChat ||
+        selectedChat._id !== newMessageRecieved.chat._id
       ) {
-        if (!notification.includes(newMessageRecieved)) {
-          setNotification([newMessageRecieved, ...notification]);
-          setFetchAgain(!fetchAgain);
+        setNotification((prev) => {
+          if (!prev.some((n) => n._id === newMessageRecieved._id)) {
+            return [newMessageRecieved, ...prev];
+          }
+          return prev;
+        });
+        if (setFetchAgain) {
+          setFetchAgain((prev) => !prev);
         }
       } else {
-        setMessages((prev) => [...prev, newMessageRecieved]);
+        setMessages((prev) => {
+          if (!prev.some((m) => m._id === newMessageRecieved._id)) {
+            return [...prev, newMessageRecieved];
+          }
+          return prev;
+        });
       }
     };
 
@@ -201,7 +229,7 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
       socket.off("message received", handleMessageReceived);
       socket.off("message recieved", handleMessageReceived);
     };
-  });
+  }, [socket, selectedChat, setNotification, setFetchAgain]);
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
