@@ -177,8 +177,8 @@ MERN-CHAT-APP/
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/AnanyaKastiya/MERN-CHAT-APP.git
-cd MERN-CHAT-APP
+git clone https://github.com/AnanyaKastiya/Ellkay-AI-Chat-Platform.git
+cd Ellkay-AI-Chat-Platform
 ```
 
 ### 3. Configure Environment Variables
