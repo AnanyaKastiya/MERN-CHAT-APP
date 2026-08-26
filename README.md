@@ -11,8 +11,6 @@
 * **`L` — Listen:** The platform seamlessly connects users and actively *listens* to the flow of team discussions and message streams.
 * **`K` — Know:** Powered by generative AI, it transforms chaotic message threads into structured, actionable *knowledge*—allowing you to know the summary, decisions, and next steps in seconds.
 
-*(It is also a subtle tribute to the creator's initials and signature project branding).*
-
 ---
 
 ## 🎯 The 2 Real-World Problems Ellkay Solves
@@ -98,112 +96,7 @@ Modern chat apps create digital fatigue and conversational friction. **Ellkay** 
 * **Bcrypt.js** — Cryptographic password hashing
 * **Cloudinary API** — Cloud image and avatar storage
 
----
-
-## 🏛️ System Architecture Diagram
-
-```mermaid
-graph TD
-    subgraph Client["Frontend (React 18 + Chakra UI)"]
-        UI[User Interface & Modals]
-        GlobalState[ChatProvider Context]
-        SocketClient[Socket.IO Client Engine]
-    end
-
-    subgraph Server["Backend (Node.js + Express.js)"]
-        Routes[API Routes: /api/user, /api/chat, /api/message]
-        Auth[JWT Protect Middleware]
-        Controllers[User, Chat & Message Controllers]
-        SocketServer[Socket.IO Room Broadcasting]
-        AIService[AI Engine: Gemini 3.7 Flash]
-    end
-
-    subgraph Cloud["Cloud Infrastructure"]
-        MongoDB[(MongoDB Atlas DB)]
-        GoogleGemini[Google Gemini 3.7 API]
-        Cloudinary[Cloudinary CDN]
-    end
-
-    UI --> GlobalState
-    GlobalState <--> SocketClient
-    UI -->|REST Requests| Routes
-    Routes --> Auth --> Controllers
-    Controllers <--> MongoDB
-    Controllers --> AIService
-    AIService <--> GoogleGemini
-    UI --> Cloudinary
-    SocketClient <-->|Bi-directional WebSockets| SocketServer
-```
-
----
-
-## 📂 Project Structure
-
-```
-MERN-CHAT-APP/
-├── backend/
-│   ├── config/             # DB connection & JWT token generator
-│   ├── controllers/        # Business logic (user, chat, message)
-│   ├── middleware/         # JWT auth middleware & error handlers
-│   ├── Models/             # Mongoose schemas (User, Chat, Message)
-│   ├── routes/             # Express API routes
-│   ├── services/           # AI service (Gemini 3.7 Flash integration)
-│   └── server.js           # Express app & Socket.IO server initialization
-├── frontend/
-│   ├── public/             # HTML template & assets
-│   └── src/
-│       ├── animations/     # Lottie JSON animations
-│       ├── components/     # ChatBox, MyChats, Modals, Authentication
-│       │   ├── authentication/
-│       │   └── miscallaneous/
-│       ├── config/         # Sender & chat helper utilities
-│       ├── Context/        # Global ChatProvider & Socket context
-│       ├── Pages/          # Homepage & ChatPage views
-│       ├── App.js          # App component & theme
-│       └── index.js        # React DOM root
-├── .env.example            # Environment variable template
-└── package.json            # Root scripts & dependencies
-```
-
----
-
-## 🚀 Getting Started Locally
-
-### 1. Prerequisites
-* [Node.js](https://nodejs.org/) (v16+ recommended)
-* [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account
-* [Google AI Studio](https://aistudio.google.com/) Gemini API Key
-* [Cloudinary](https://cloudinary.com/) account (for image uploads)
-
-### 2. Clone the Repository
-```bash
-git clone https://github.com/AnanyaKastiya/Ellkay-AI-Chat-Platform.git
-cd Ellkay-AI-Chat-Platform
-```
-
-### 3. Configure Environment Variables
-Create a `.env` file in the root directory:
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-NODE_ENV=development
-GEMINI_API_KEY=your_google_gemini_api_key
-```
-
-### 4. Install Dependencies & Run
-```bash
-# Install root & frontend dependencies
-npm run build
-
-# Start backend & frontend concurrently in development mode
-npm run start
-```
-Open **`http://localhost:3000`** in your browser.
-
----
 
 ## 👩‍💻 Author
-**Ananya Kastiya**  
-GitHub: [@AnanyaKastiya](https://github.com/AnanyaKastiya)  
+**Ananya Kastiya**   
 Live Demo: [https://linkify-1q81.onrender.com](https://linkify-1q81.onrender.com)
