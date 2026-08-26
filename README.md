@@ -1,8 +1,8 @@
-# Linkify
+# Ellkay
 
 **Live Demo:** [https://linkify-1q81.onrender.com](https://linkify-1q81.onrender.com)
 
-Linkify is a full-stack real-time chat application that enables users to communicate seamlessly through direct messages and group chats. Designed with a modern interface and built using the MERN stack, it features real-time messaging, user authentication, and intuitive interactions.
+Ellkay is a full-stack real-time collaborative workspace and AI chat platform. Built using the MERN stack (MongoDB, Express.js, React, Node.js), Socket.io, and Google Gemini 3.7 Flash, it features instant messaging, team group chats, AI conversation summarization, and context-aware in-chat AI assistance.
 
 ## Features
 

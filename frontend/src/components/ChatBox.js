@@ -397,6 +397,7 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
                   {messages &&
                     messages.map((m, i) => {
                       const isAi =
+                        m.sender?.email === "ai@ellkay.internal" ||
                         m.sender?.email === "ai@linkify.internal" ||
                         m.sender?.name?.includes("AI");
 
@@ -439,7 +440,7 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
                             >
                               {isAi && (
                                 <Badge colorScheme="purple" mb={1} fontSize="2xs">
-                                  ✨ Linkify AI Assistant
+                                  ✨ Ellkay AI Assistant
                                 </Badge>
                               )}
                               <Text fontSize="sm" whiteSpace="pre-wrap">

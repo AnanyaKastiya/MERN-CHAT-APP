@@ -135,7 +135,7 @@ const SideDrawer = () => {
 
         {/* App Name Centered */}
         <Text fontSize="2xl" fontFamily="Work sans" color="white" fontWeight="bold" textAlign="center" flex={1}>
-          Linkify
+          Ellkay
         </Text>
 
         {/* Notification Bell and Profile Menu */}

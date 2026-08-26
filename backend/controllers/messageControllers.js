@@ -5,14 +5,19 @@ const Chat = require("../Models/chatModel");
 const aiService = require("../services/aiService");
 
 const getAiUser = async () => {
-  let aiUser = await User.findOne({ email: "ai@linkify.internal" });
+  let aiUser = await User.findOne({
+    $or: [{ email: "ai@ellkay.internal" }, { email: "ai@linkify.internal" }],
+  });
   if (!aiUser) {
     aiUser = await User.create({
-      name: "Linkify AI ✨",
-      email: "ai@linkify.internal",
+      name: "Ellkay AI ✨",
+      email: "ai@ellkay.internal",
       password: "ai-system-secret-password-12345",
-      pic: "https://api.dicebear.com/7.x/bottts/svg?seed=LinkifyAI",
+      pic: "https://api.dicebear.com/7.x/bottts/svg?seed=EllkayAI",
     });
+  } else if (aiUser.name !== "Ellkay AI ✨") {
+    aiUser.name = "Ellkay AI ✨";
+    await aiUser.save();
   }
   return aiUser;
 };

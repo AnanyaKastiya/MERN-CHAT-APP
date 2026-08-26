@@ -70,7 +70,7 @@ const ChatSummaryModal = ({ children }) => {
 
   const copyToClipboard = () => {
     if (!summary) return;
-    const text = `📋 Linkify AI Chat Summary: ${selectedChat?.chatName || "Conversation"}
+    const text = `📋 Ellkay AI Chat Summary: ${selectedChat?.chatName || "Conversation"}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📌 Overview:
 ${summary.overview || "N/A"}
@@ -85,7 +85,7 @@ ${summary.decisions?.length ? summary.decisions.map((d) => `• ${d}`).join("\n"
 ${summary.actionItems?.length ? summary.actionItems.map((a) => `[ ] ${a}`).join("\n") : "• None pending"}
 
 Mood / Sentiment: ${summary.sentiment || "Neutral"}
-(Analyzed ${summary.messageCount || 0} messages with Gemini 2.5 Flash)`;
+(Analyzed ${summary.messageCount || 0} messages with Gemini 3.7 Flash)`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -109,7 +109,7 @@ Mood / Sentiment: ${summary.sentiment || "Neutral"}
             <HStack justify="space-between" align="center">
               <HStack spacing={2}>
                 <Text fontSize="xl" fontWeight="bold" bgGradient="linear(to-r, purple.400, teal.300)" bgClip="text">
-                  ✨ Linkify AI Intelligence
+                  ✨ Ellkay AI Intelligence
                 </Text>
                 <Badge colorScheme="purple" variant="subtle" fontSize="xs" px={2} py={0.5} borderRadius="full">
                   Gemini 3.7

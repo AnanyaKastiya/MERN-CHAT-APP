@@ -116,7 +116,7 @@ const generateAiReply = async (userPrompt, recentMessages = []) => {
     .map((m) => `${m.sender?.name || "User"}: ${m.content}`)
     .join("\n");
 
-  const prompt = `You are "Linkify AI", a helpful, intelligent, and concise AI assistant embedded directly into this chat room.
+  const prompt = `You are "Ellkay AI", a helpful, intelligent, and concise AI assistant embedded directly into this chat room.
 Context of recent messages in this chat:
 ${contextSnippet || "No prior messages."}
 
